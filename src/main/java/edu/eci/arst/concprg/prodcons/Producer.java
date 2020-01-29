@@ -7,6 +7,7 @@ package edu.eci.arst.concprg.prodcons;
 
 import java.util.Queue;
 import java.util.Random;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,13 +17,13 @@ import java.util.logging.Logger;
  */
 public class Producer extends Thread {
 
-    private Queue<Integer> queue = null;
+    private LinkedBlockingQueue<Integer>  queue = null;
 
     private int dataSeed = 0;
     private Random rand=null;
     private final long stockLimit;
 
-    public Producer(Queue<Integer> queue,long stockLimit) {
+    public Producer(LinkedBlockingQueue<Integer> queue, long stockLimit) {
         this.queue = queue;
         rand = new Random(System.currentTimeMillis());
         this.stockLimit=stockLimit;
@@ -33,13 +34,12 @@ public class Producer extends Thread {
         while (true) {
 
             dataSeed = dataSeed + rand.nextInt(100);
-            System.out.println("Producer added " + dataSeed);
-            queue.add(dataSeed);
-            
             try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Producer.class.getName()).log(Level.SEVERE, null, ex);
+                queue.put(dataSeed);
+                System.out.println("Producer added " + dataSeed);
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
 
         }
