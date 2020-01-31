@@ -13,7 +13,7 @@ cuando no hay algun elemento que extraer.
 La suma de la vida de los N jugadores seria la multiplicación de N por DEFAULT_IMMORTAL_HEALTH.
 3. Run the application and verify how the ‘pause and check’ option works. Is the invariant fulfilled?
 No, no se cumple ya que la suma presentada en pantalla es mayor a la que deberia ser.  
-![](mg/Noinvariante.png)
+![](img/Noinvariante.png)
 4. A first hypothesis that the race condition for this function (pause and check) is presented is that the program consults the list whose values ​​it will print, while other threads modify their values. To correct this, do whatever is necessary so that, before printing the current results, all other threads are paused. Additionally, implement the ‘resume’ option.
 Para realizar el correcto menejo de los hilos usamos monitores y con un entero atómico saber el número de hilos que estan pausados y con esto conocer el momento en el que todos los hilos se han pausado para asi realizar la suma.  
 5. Check the operation again (click the button many times). Is the invariant fulfilled or not ?.  
