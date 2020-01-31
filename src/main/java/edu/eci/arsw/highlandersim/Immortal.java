@@ -2,6 +2,7 @@ package edu.eci.arsw.highlandersim;
 
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Immortal extends Thread {
 
@@ -17,6 +18,10 @@ public class Immortal extends Thread {
 
     private final Random r = new Random(System.currentTimeMillis());
 
+    public static final AtomicInteger nPausados = new AtomicInteger(0);
+
+    public static Object monitor1 = new Object();
+
 
     public Immortal(String name, List<Immortal> immortalsPopulation, int health, int defaultDamageValue, ImmortalUpdateReportCallback ucb) {
         super(name);
@@ -30,27 +35,50 @@ public class Immortal extends Thread {
     public void run() {
 
         while (true) {
-            Immortal im;
+            if(!ControlFrame.pause) {
+                Immortal im;
 
-            int myIndex = immortalsPopulation.indexOf(this);
+                int myIndex = immortalsPopulation.indexOf(this);
 
-            int nextFighterIndex = r.nextInt(immortalsPopulation.size());
+                int nextFighterIndex = r.nextInt(immortalsPopulation.size());
 
-            //avoid self-fight
-            if (nextFighterIndex == myIndex) {
-                nextFighterIndex = ((nextFighterIndex + 1) % immortalsPopulation.size());
+                //avoid self-fight
+                if (nextFighterIndex == myIndex) {
+                    nextFighterIndex = ((nextFighterIndex + 1) % immortalsPopulation.size());
+                }
+
+                im = immortalsPopulation.get(nextFighterIndex);
+
+                this.fight(im);
+
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
-
-            im = immortalsPopulation.get(nextFighterIndex);
-
-            this.fight(im);
-
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            else{
+                pausar();
             }
+        }
 
+    }
+
+    private void pausar(){
+        nPausados.incrementAndGet();
+        synchronized (ControlFrame.monitor){
+            if(nPausados.get() == immortalsPopulation.size()){
+                ControlFrame.monitor.notifyAll();
+            }
+        }
+        synchronized (monitor1){
+            if(ControlFrame.pause){
+                try {
+                    monitor1.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
     }

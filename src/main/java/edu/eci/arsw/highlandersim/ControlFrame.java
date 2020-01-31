@@ -35,6 +35,8 @@ public class ControlFrame extends JFrame {
     private JLabel statisticsLabel;
     private JScrollPane scrollPane;
     private JTextField numOfImmortals;
+    public static Object monitor = new Object();
+    public static boolean pause = false;
 
     /**
      * Launch the application.
@@ -87,10 +89,17 @@ public class ControlFrame extends JFrame {
         JButton btnPauseAndCheck = new JButton("Pause and check");
         btnPauseAndCheck.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                pause = true;
+                synchronized (monitor){
+                    if(immortals.size() != Immortal.nPausados.get()){
+                        try {
+                            monitor.wait();
+                        } catch (InterruptedException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                }
 
-                /*
-				 * COMPLETAR
-                 */
                 int sum = 0;
                 for (Immortal im : immortals) {
                     sum += im.getHealth();
@@ -108,9 +117,11 @@ public class ControlFrame extends JFrame {
 
         btnResume.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                /**
-                 * IMPLEMENTAR
-                 */
+                synchronized (Immortal.monitor1){
+                    pause = false;
+                    Immortal.monitor1.notifyAll();
+                    Immortal.nPausados.set(0);
+                }
 
             }
         });
