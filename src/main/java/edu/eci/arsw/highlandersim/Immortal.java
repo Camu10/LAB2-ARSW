@@ -23,6 +23,8 @@ public class Immortal extends Thread {
 
     public static Object monitor1 = new Object();
 
+    private  volatile boolean vivo = true;
+
 
     public Immortal(String name, CopyOnWriteArrayList<Immortal> immortalsPopulation, int health, int defaultDamageValue, ImmortalUpdateReportCallback ucb) {
         super(name);
@@ -35,7 +37,7 @@ public class Immortal extends Thread {
 
     public void run() {
 
-        while (true) {
+        while (!ControlFrame.stop && vivo) {
             if (!ControlFrame.pause) {
                 Immortal im=null;
                 int myIndex = immortalsPopulation.indexOf(this);
@@ -68,6 +70,7 @@ public class Immortal extends Thread {
 
     private void pausar() {
         nPausados.incrementAndGet();
+
         synchronized (ControlFrame.monitor) {
             if (nPausados.get() == immortalsPopulation.size()) {
                 ControlFrame.monitor.notifyAll();
@@ -87,7 +90,10 @@ public class Immortal extends Thread {
 
     public void fight(Immortal i2) {
         boolean attack = false;
-        if (getHealth().get() <= 0) immortalsPopulation.remove(this);
+        if (getHealth().get() <= 0) {
+            immortalsPopulation.remove(this);
+            vivo = false;
+        }
         else {
             synchronized (i2) {
                 attack = i2.getHealth().get() > 0;

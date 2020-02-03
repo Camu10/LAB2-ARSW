@@ -38,6 +38,7 @@ public class ControlFrame extends JFrame {
     private JTextField numOfImmortals;
     public static Object monitor = new Object();
     public static boolean pause = false;
+    public static boolean stop = false;
 
     /**
      * Launch the application.
@@ -74,7 +75,6 @@ public class ControlFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
 
                 immortals = setupInmortals();
-
                 if (immortals != null) {
                     for (Immortal im : immortals) {
                         im.start();
@@ -138,6 +138,21 @@ public class ControlFrame extends JFrame {
         numOfImmortals.setColumns(10);
 
         JButton btnStop = new JButton("STOP");
+        btnStop.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                stop = true;
+                btnPauseAndCheck.setEnabled(false);
+                btnResume.setEnabled(false);
+
+                int sum = 0;
+                for (Immortal im : immortals) {
+                    sum += im.getHealth().get();
+                }
+
+                statisticsLabel.setText("<html>"+immortals.toString()+"<br>Health sum:"+ sum);
+
+            }
+        });
         btnStop.setForeground(Color.RED);
         toolBar.add(btnStop);
 
