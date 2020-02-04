@@ -1,0 +1,6 @@
+Si se eliminan de la lista en una zona no sincronizada puede generar condiciones de carrera puesto que :
+1. la generacion del indice aleatorio puede estar leyendo valores obsoletos de el tamaño de la lista y generar 
+excepciones por intentar acceder a posiciones donde ya no hay inmortales
+2. Se pueden generar versiones obsoletas de las listas en algunos hilos, lo que puede generar que algunos inmortales
+ataquen a otros que no deberian estar en la lista
+3. Se podrian eliminar inmortales mientras son atacados y esto generaria errores en el invariante 
