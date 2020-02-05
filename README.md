@@ -5,7 +5,7 @@
 + Juan Camilo Rojas Ortiz
 
 ## Compile and run instructions.
-+ **Para compilar:** maven package
++ **Para compilar:** mvn package
 + **Para ejecutar la clase principal:** mvn exec:java -Dexec.mainClass="edu.eci.arst.concprg.prodcons.StartProduction"
 + **Para ejecutar la clase principal:** mvn exec:java -Dexec.mainClass="edu.eci.arsw.highlandersim.ControlFrame"
 + **Para ejecutar las pruebas:** mvn test
