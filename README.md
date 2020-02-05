@@ -29,4 +29,6 @@ No, no se cumple ya que la suma presentada en pantalla es mayor a la que deberia
 4. A first hypothesis that the race condition for this function (pause and check) is presented is that the program consults the list whose values ​​it will print, while other threads modify their values. To correct this, do whatever is necessary so that, before printing the current results, all other threads are paused. Additionally, implement the ‘resume’ option.  
 Para realizar el correcto menejo de los hilos usamos monitores y con un entero atómico saber el número de hilos que estan pausados y con esto conocer el momento en el que todos los hilos se han pausado para asi realizar la suma.  
 5. Check the operation again (click the button many times). Is the invariant fulfilled or not ?.  
-A pesar de haber hecho de manera correcta la sinconización de los hilos el resultado sigue siendo un numero errado.  
+A pesar de haber hecho de manera correcta la sincronización de los hilos el resultado sigue siendo un numero errado.  
+6. Identify possible critical regions in regards to the fight of the immortals. Implement a blocking strategy that avoids race conditions. Remember that if you need to use two or more ‘locks’ simultaneously, you can use nested synchronized blocks:  
+Consideramos que la región critica es el método fight() en la clase Immortal.
