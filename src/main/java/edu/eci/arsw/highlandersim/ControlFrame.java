@@ -37,6 +37,7 @@ public class ControlFrame extends JFrame {
     private JScrollPane scrollPane;
     private JTextField numOfImmortals;
     public static Object monitor = new Object();
+    private int sum;
     public static boolean pause = false;
     public static boolean stop = false;
 
@@ -74,12 +75,7 @@ public class ControlFrame extends JFrame {
         btnStart.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
 
-                immortals = setupInmortals();
-                if (immortals != null) {
-                    for (Immortal im : immortals) {
-                        im.start();
-                    }
-                }
+                iniciar();
 
                 btnStart.setEnabled(false);
 
@@ -90,26 +86,8 @@ public class ControlFrame extends JFrame {
         JButton btnPauseAndCheck = new JButton("Pause and check");
         btnPauseAndCheck.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                pause = true;
-                synchronized (monitor){
-                    if(immortals.size() != Immortal.nPausados.get()){
-                        try {
-                            monitor.wait();
-                        } catch (InterruptedException ex) {
-                            ex.printStackTrace();
-                        }
-                    }
-                }
 
-                int sum = 0;
-                for (Immortal im : immortals) {
-                    sum += im.getHealth().get();
-                }
-
-                statisticsLabel.setText("<html>"+immortals.toString()+"<br>Health sum:"+ sum);
-                
-                
-
+                pausar();
             }
         });
         toolBar.add(btnPauseAndCheck);
@@ -118,11 +96,8 @@ public class ControlFrame extends JFrame {
 
         btnResume.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                synchronized (Immortal.monitor1){
-                    pause = false;
-                    Immortal.monitor1.notifyAll();
-                    Immortal.nPausados.set(0);
-                }
+
+                reanudar();
 
             }
         });
@@ -140,16 +115,11 @@ public class ControlFrame extends JFrame {
         JButton btnStop = new JButton("STOP");
         btnStop.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                stop = true;
+
                 btnPauseAndCheck.setEnabled(false);
                 btnResume.setEnabled(false);
 
-                int sum = 0;
-                for (Immortal im : immortals) {
-                    sum += im.getHealth().get();
-                }
-
-                statisticsLabel.setText("<html>"+immortals.toString()+"<br>Health sum:"+ sum);
+                detener();
 
             }
         });
@@ -188,6 +158,58 @@ public class ControlFrame extends JFrame {
             return null;
         }
 
+    }
+
+    public void iniciar(){
+        immortals = setupInmortals();
+        if (immortals != null) {
+            for (Immortal im : immortals) {
+                im.start();
+            }
+        }
+    }
+
+    public void pausar(){
+        pause = true;
+        synchronized (monitor){
+            if(immortals.size() != Immortal.nPausados.get()){
+                try {
+                    monitor.wait();
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+
+        sum = 0;
+        for (Immortal im : immortals) {
+            sum += im.getHealth().get();
+        }
+
+        statisticsLabel.setText("<html>"+immortals.toString()+"<br>Health sum:"+ sum);
+
+    }
+
+    public void reanudar(){
+        synchronized (Immortal.monitor1){
+            pause = false;
+            Immortal.monitor1.notifyAll();
+            Immortal.nPausados.set(0);
+        }
+    }
+
+    public void detener(){
+        stop = true;
+        sum = 0;
+        for (Immortal im : immortals) {
+            sum += im.getHealth().get();
+        }
+
+        statisticsLabel.setText("<html>"+immortals.toString()+"<br>Health sum:"+ sum);
+    }
+
+    public int getSuma(){
+        return sum;
     }
 
 }

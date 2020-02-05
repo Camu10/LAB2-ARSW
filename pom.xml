@@ -4,6 +4,14 @@
     <groupId>co.edu.eci.pdsw</groupId>
     <artifactId>ConcurrentPrgExercises-Highlander-Prod-Cons</artifactId>
     <version>1.0</version>
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
